@@ -17,7 +17,7 @@ def arduino_send_receive(motor_rpm_percent):
         inbound_message, remote_address = udp_socket.recvfrom(24)
         # returns an array with the following values
         # [accel_x, accel_y, accel_z, range_sensor]
-        return np.array(inbound_message.decode('ascii').split(',')).astype(float);
+        return np.array(inbound_message.decode('ascii').split(',')).astype(float)
     except Exception as e:
         print(e)
 
