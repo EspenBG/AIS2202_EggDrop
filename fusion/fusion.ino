@@ -5,6 +5,8 @@
 #include <Ethernet.h>
 #include <EthernetUdp.h>
 
+bool DEBUG = false;
+
 VL53L0X range_sensor;
 I2C_MPU6886 imu(I2C_MPU6886_DEFAULT_ADDRESS, Wire);
 
@@ -18,6 +20,7 @@ char packet_buffer[UDP_TX_PACKET_MAX_SIZE];
 void setup() 
 {
   Serial.begin(115200);
+  
   Wire.begin();
   Ethernet.begin(mac, ip);
   delay(500);
@@ -30,6 +33,7 @@ void setup()
   range_sensor.startContinuous();
 
   udp_server.begin(8888);
+
   Serial.println("Setup complete");
 }
 
@@ -53,10 +57,11 @@ bool initialize()
   if(Ethernet.linkStatus() == LinkOFF) 
   {
     Serial.println("Ethernet::LinkOff: is the cable connected?");
-    return false;
+    // return false;
   }
   else if(Ethernet.linkStatus() == LinkON)
     Serial.println("Ethernet::LinkOn");
+    
   return true;
 }
   
@@ -83,17 +88,19 @@ void loop()
 
     udp_server.read(packet_buffer, UDP_TX_PACKET_MAX_SIZE);
     float motor_power = String(packet_buffer).toFloat();
-    Serial.print("MPP: ");Serial.println(motor_power);
+    if (DEBUG) {Serial.print("MPP: ");Serial.println(motor_power);}
 
     udp_server.beginPacket(udp_server.remoteIP(), udp_server.remotePort());
     udp_server.write(sensor_values.c_str(), sensor_values.length());
     udp_server.endPacket();
-  
-    printVector3('A', accel);
-    printVector3('G', gyro);
-    printScalar('T', t);
-    printScalar('D', d);
-    printPackageMetaInfo(packet_size);
+    
+    if (DEBUG){
+      printVector3('A', accel);
+      printVector3('G', gyro);
+      printScalar('T', t);
+      printScalar('D', d);
+      printPackageMetaInfo(packet_size);
+    }
   }
 }
 
