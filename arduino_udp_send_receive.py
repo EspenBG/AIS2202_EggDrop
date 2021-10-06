@@ -24,6 +24,7 @@ def arduino_send_receive(motor_rpm_percent):
 
 def use_sensor_values_for_something(sensor_values):
     print(sensor_values)
+    pass
 
 
 def arduino_has_been_reset():
@@ -31,6 +32,7 @@ def arduino_has_been_reset():
 
 
 power = 0.0
+i =0
 while(True):
     power = power + 1
     if(power > 100.0):
@@ -39,6 +41,7 @@ while(True):
     sensor_values = arduino_send_receive(power)
     if(sensor_values is not None):
         use_sensor_values_for_something(sensor_values)
+        if power % 10 == 1: print("-------------------------")
     else:
         arduino_has_been_reset()
 
