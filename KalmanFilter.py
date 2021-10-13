@@ -3,17 +3,17 @@ import numpy as np
 
 class KalmanFilter:
     import numpy as np
+    """Kalman filter"""
+    def __init__(self, G, variance, H, start_value):
+        self.A_ = None  # Can not be made before delta_t is given 3x3 vector
+        self.x_priori_ = start_value  # Set initial start value 1x3 vector
 
-    def __init__(self, time_usage, Var):
-        self._A_ = None
-        self._x_priori_ = 0
-        self._H_ = None
-        self._x_Var_ = Var
-        self._Q_ = None
-        self._R_ = None
-        self._Q_ = None
+        self.H_ = H  # 3x1 vector
+        self.x_Var_ = variance
+        self.R_ = None
+        self.Q_ = None
 
-        self._x_ = 0
+        self.x_ = 0
         pass
 
     def getNewSensorValue(self, delta_t, measurement, H=None):
