@@ -5,7 +5,7 @@ class KalmanFilter:
     import numpy as np
     """Kalman filter, 
     """
-    def __init__(self, A, G, H, P,  start_value, hvite_variance, set_variance):
+    def __init__(self, A, G, H, P,  start_value, set_variance, white_variance = 0):
         size = A.size()
 
         self.A_ = A  # Can not be made before delta_t is given 3x3 vector
@@ -15,8 +15,7 @@ class KalmanFilter:
 
         self.H_ = H  # 3x1 vector
         self.x_Var_ = set_variance
-        self.hvite_var = hvite_variance
-        self.R_ = None
+        self.R_ = white_variance
         self.P_ = P
         self.P_priori_ = None
         self.K_ = np.zeros(size[0])
@@ -29,8 +28,8 @@ class KalmanFilter:
     def setH(self, H):
         self.H_ = H
 
-    def setVarians(self, varians):
-        self.x_Var_ = varians
+    def setHviteVarians(self, variance):
+        self.R_ = variance
 
     def getNewSensorValue(self, delta_t, measurement):
         calc_Q_(delta_t)
