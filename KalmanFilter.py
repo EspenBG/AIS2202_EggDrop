@@ -2,13 +2,18 @@ import numpy as np
 
 
 class KalmanFilter:
-
     import numpy as np
-    def __init__(self, A, ):
+
+    def __init__(self, time_usage, Var):
+        self._A_ = None
+        self._x_priori_ = 0
         self._H_ = None
+        self._x_Var_ = Var
         self._Q_ = None
         self._R_ = None
-        self._A_ = None
+        self._Q_ = None
+
+        self._x_ = 0
         pass
 
     def getNewSensorValue(self, delta_t, measurement, H=None):
