@@ -6,7 +6,7 @@ from KalmanFilter import KalmanFilter
 class SensorFusion:
 
     def __init__(self, start_height, eval_variance, distance_variance, acceleration_variance):
-        self.kf = KalmanFilter(self.getA(), start_value=start_height)
+        self.kf = KalmanFilter(self.getA, self.getG, start_value=start_height)
 
         self.delta_t = 0
         self.distance_variance = distance_variance
