@@ -1,6 +1,8 @@
+import datetime
 import time
 from socket import *
 import numpy as np
+import statistics as stat
 
 power = 0.0  # Sets the initial value for power
 
@@ -19,17 +21,17 @@ reset = True  # NOT IN USE
 previous_time = datetime.datetime.now()  # Variable that holds time when program is here
 
 sensor_log_data = []  # Array that holds the sensor readings
-estimates_log_data = []  # Array that holds the estimates
 
 
-def arduino_send_receive(estimate):
+def arduino_receive():
     global reset
     global previous_time
     if not reset:
         previous_time = datetime.datetime.now()
 
-    distance = estimate.item((0, 0))
-    udp_socket.sendto(str(distance).encode(), (arduino_ip, arduino_port))
+
+    # udp_socket.sendto(str(distance).encode(), (arduino_ip, arduino_port))
+
     try:
         inbound_message, remote_address = udp_socket.recvfrom(24)
         # returns an array with the following values
@@ -37,24 +39,31 @@ def arduino_send_receive(estimate):
         parse = np.array(inbound_message.decode('ascii').split(',')).astype(float)
         reset = True
         # Only need item 2 and 3 (respectively acceleration in z direction and range sensor data)
-        ret = [parse.item(0), parse.item(1), parse.item(2),
-               parse.item(3)]  # OBS: husk at verdiene har ulike enheter (m/s^2 og mm)
+        ret = [parse.item(0), parse.item(1), parse.item(2), parse.item(3)]  # OBS: husk at verdiene har ulike enheter (m/s^2 og mm)
         return ret
     except Exception as e:
         print(e)
 
 def log_measurements (measurements):
     # Only need item 2 and 3 (respectively acceleration in z direction and range sensor data)
-    sensor_log_data.append([delta_t, measurements[2], measurements[3]])
+    sensor_log_data.append([measurements[2], measurements[3]])
 
-    # If the measurement log exceeds 500 lines, then clear all
+    # If the measurement log exceeds 500 lines
     if len(sensor_log_data) > 500:
-        np.savetxt('measures.csv', sensor_log_data, delimiter=',')
-        sensor_log_data.clear()             # removes all data from dictionary
+        np.savetxt('measures.csv', sensor_log_data, delimiter=',')      # Saves the measurement data to csv file
+        sensor_log_data.clear()                                         # Removes all data from dictionary
+        return True
 
 
+# TODO - Use either library with built-in functions or create variance function on own
 def calculate_variance(sensor_values):
-    print(sensor_values)
+
+
+        # TODO - Pass incoming data as array into argument of variance
+        # Need to figure out how to structure the csv data into an array for each sensor
+        print("Variance for accelerometer: " + stat.variance())
+        print("Variance for distance sensor: " + stat.variance())
+
     pass
 
 
@@ -63,19 +72,17 @@ def arduino_has_been_reset():
 
 
 while True:
-    power = power + 1
-    if power > 100.0:
-        power = 0.0
 
-    # TODO - Structure the incoming data in a way that can be easily used in calculating variance
-    sensor_values = arduino_send_receive(power)
+    sensor_values = arduino_receive()
 
     # If sensor data is read,
     if sensor_values is not None:
-        # TODO - Change this function to calculate and prints out variance for incoming values
 
-        calculate_variance(sensor_values)
-        if power % 10 == 1:
-            print("-------------------------")
+        # Saves the data to a CSV file
+        log_measurements(sensor_values)
+
+        # When the VSC file has exceeded 500 lines variance for both sensors are calculated
+        if log_measurements():
+            calculate_variance()
     else:
         arduino_has_been_reset()
