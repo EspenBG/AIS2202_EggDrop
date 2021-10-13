@@ -2,6 +2,8 @@ import time
 from socket import *
 import numpy as np
 
+print("foobar")
+
 udp_socket = socket(AF_INET, SOCK_DGRAM)
 udp_socket.settimeout(1)
 
