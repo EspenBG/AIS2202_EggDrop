@@ -5,7 +5,7 @@ import numpy as np
 udp_socket = socket(AF_INET, SOCK_DGRAM)
 udp_socket.settimeout(1)
 
-np.set_printoptions(suppress=True)
+np.set_printoptions(suppress = True)
 
 arduino_ip = '192.168.10.240'
 arduino_port = 8888
@@ -32,15 +32,16 @@ def arduino_has_been_reset():
 
 
 power = 0.0
-i = 0
-while (True):
+i =0
+while(True):
     power = power + 1
-    if (power > 100.0):
+    if(power > 100.0):
         power = 0.0
 
     sensor_values = arduino_send_receive(power)
-    if (sensor_values is not None):
+    if(sensor_values is not None):
         use_sensor_values_for_something(sensor_values)
         if power % 10 == 1: print("-------------------------")
     else:
         arduino_has_been_reset()
+
