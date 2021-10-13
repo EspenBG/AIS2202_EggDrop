@@ -56,4 +56,3 @@ class KalmanFilter:
         self.P_=(1-self.K_@self.H_)@self.P_priori
 
 
-a = KalmanFilter()
