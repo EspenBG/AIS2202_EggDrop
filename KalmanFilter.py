@@ -29,10 +29,10 @@ class KalmanFilter:
 
 
 
-    def setH(self, H):
+    def set_H(self, H):
         self.H_ = H
 
-    def setHviteVarians(self, variance):
+    def set_hvite_varians(self, variance):
         self.R_ = variance
 
     def getNewSensorValue(self, delta_t, measurement):
