@@ -16,20 +16,22 @@ class KalmanFilter:
         if H is not None:
             self.H_ = H
         else:
-            self.H_ = np.zeros(size[0])  # 3x1 vector
+            self.H_ = np.zeros((1, size[0]))  # 3x1 vector
 
         self.x_Var_ = set_variance
         self.R_ = white_variance
         self.P_ = np.zeros(size)
         self.P_priori_ = None
-        self.K_ = np.zeros(size[0])
+        self.K_ = np.zeros((size[0], 1))
 
         # Q matrix represent G*G^(-1)*(expected variance)
         self.Q_ = None
+        self.I = np.eye(size[1])
 
+    def setR(self, R):
+        self.R_ = R
 
-
-    def set_H(self, H):
+    def setH(self, H):
         self.H_ = H
 
     def set_hvite_varians(self, variance):
@@ -47,15 +49,19 @@ class KalmanFilter:
         self.Q_ = self.G_(delta_t)@np.transpose(self.G_(delta_t))*self.x_Var_
 
     def predict(self, delta_t):
-        self.x_priori_ = self.A_(delta_t)@self.x_ # + w_(k-1)  // dette er produkt stoy
-        self.P_priori_ = self.A_(delta_t)@self.P_@np.transpose(self.A_(delta_t))+self.Q_
+        A = self.A_(delta_t)
+        self.x_priori_ = A@self.x_  # + w_(k-1)  // dette er produkt stoy
+        self.calc_Q_(delta_t)
+        A_trans = A.T
+        self.P_priori_ = A@self.P_@A_trans+self.Q_
 
     def correct(self, measurement):
-        tmpHP = self.P_priori@np.transpose(self.H_)
-        self.K_ = tmpHP*(self.H_@tmpHP+self.hvite_var)
+        H_trans = self.H_.T
+        tmpPH = self.P_priori_@H_trans
+        self.K_ = tmpPH*np.linalg.inv(self.H_@tmpPH+self.R_)
 
         self.x_=self.x_priori_+self.K_*(measurement-self.H_@self.x_priori_)
 
-        self.P_=(1-self.K_@self.H_)@self.P_priori
+        self.P_=(self.I-self.K_@self.H_)@self.P_priori_
 
 

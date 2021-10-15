@@ -6,15 +6,15 @@ from KalmanFilter import KalmanFilter
 class SensorFusion:
 
     def __init__(self, start_height, eval_variance, distance_variance, acceleration_variance):
-        self.kf = KalmanFilter(self.getA, self.getG, eval_variance, start_value=np.array([start_height, 0, 0]))
+        self.kf = KalmanFilter(self.getA, self.getG, eval_variance, start_value=np.array([[start_height], [0], [0]]))
         self.estimate = np.array((0, 0))
         self.delta_t = 0
         self.distance_variance = distance_variance
         self.acceleration_variance = acceleration_variance
         self.evaluation_variance = eval_variance
 
-        self.distance_H = np.array([1, 0, 0])
-        self.acceleration_H = np.array([0, 0, 1])
+        self.distance_H = np.array([[1, 0, 0]])
+        self.acceleration_H = np.array([[0, 0, 1]])
 
     def getNewValue(self, measurement, delta_t):
         pass
@@ -27,7 +27,9 @@ class SensorFusion:
         return a
 
     def getG(self, dt):
-        return np.array([[1/6*dt**3], [1/2*dt**2], [dt]])
+        return np.array([[1/6*dt**3],
+                         [1/2*dt**2],
+                         [dt]])
 
     def set_timestep(self, delta_t):
         self.delta_t = delta_t
@@ -44,8 +46,7 @@ class SensorFusion:
 
     def estimates(self):
         x_est = self.kf.get_x()
-
-        return np.array((x_est[0], x_est[2]))
+        return x_est
 
 
 #f = SensorFusion(0, 1, 2.765112489591674*1000, .00021203102776483*9.81)

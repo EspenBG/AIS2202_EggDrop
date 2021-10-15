@@ -20,13 +20,15 @@ def arduino_send_receive(motor_rpm_percent):
         inbound_message, remote_address = udp_socket.recvfrom(24)
         # returns an array with the following values
         # [accel_x, accel_y, accel_z, range_sensor]
-        return np.array(inbound_message.decode('ascii').split(',')).astype(float)
+        t = np.array(inbound_message.decode('ascii').split(',')).astype(float)
+        print(t)
+        return t
     except Exception as e:
         print(e)
 
 
 def use_sensor_values_for_something(sensor_values):
-    print(sensor_values)
+    #print(sensor_values)
     pass
 
 
@@ -35,7 +37,7 @@ def arduino_has_been_reset():
 
 
 def log_measurements_and_estimates(delta_t, estimates, measurements):
-    sensor_log_data.append([delta_t, measurements[0], measurements[1], measurements[2], measurements[3]])
+    #sensor_log_data.append([delta_t, measurements[0], measurements[1], measurements[2], measurements[3]])
     #estimates_log_data.append([estimates.item(0, 0), estimates.item(1, 0), estimates.item(2, 0)])
 
     if len(sensor_log_data) > 500:
