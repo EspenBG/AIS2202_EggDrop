@@ -3,7 +3,7 @@ import time
 from socket import *
 import numpy as np
 
-from fusion import Fusion
+from SensorFusion import SensorFusion
 
 udp_socket = socket(AF_INET, SOCK_DGRAM)
 udp_socket.settimeout(1)
@@ -14,7 +14,7 @@ arduino_ip = '192.168.10.240'
 arduino_port = 8888
 
 # En klasse som håndterer sensor fusion og bygger matrisene som brukes i Kalman filteret. KF er implementert som en egen klasse. Disse to må dere implementere selv
-f = Fusion() 
+f = SensorFusion(0, 1, 2.765112489591674*1000, .00021203102776483*9.81)
 
 reset = True
 previous_time = datetime.datetime.now()
@@ -37,7 +37,7 @@ def arduino_send_receive(estimate):
         # [accel_x, accel_y, accel_z, range_sensor]
         parse = np.array(inbound_message.decode('ascii').split(',')).astype(float)
         reset = True
-        ret = [parse.item(0), parse.item(1), parse.item(2), parse.item(3)] # husk at verdiene har ulike enheter (m/s^2 og mm)
+        ret = [parse.item(0), parse.item(1), parse.item(2)*9.81, parse.item(3)*1000]  # husk at verdiene har ulike enheter (m/s^2 og mm)
         return ret
     except Exception as e:
         print(e)
@@ -76,7 +76,7 @@ def arduino_has_been_reset():
     if reset:
         print("Arduino is offline.. Resetting kalman filter")
         global f
-        f = Fusion()
+        f = SensorFusion()
         reset = False
 
 

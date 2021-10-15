@@ -59,10 +59,10 @@ def log_measurements (measurements):
 def calculate_variance(sensor_values):
 
 
-        # TODO - Pass incoming data as array into argument of variance
-        # Need to figure out how to structure the csv data into an array for each sensor
-        print("Variance for accelerometer: " + stat.variance())
-        print("Variance for distance sensor: " + stat.variance())
+    # TODO - Pass incoming data as array into argument of variance
+    # Need to figure out how to structure the csv data into an array for each sensor
+    print("Variance for accelerometer: " + stat.variance())
+    print("Variance for distance sensor: " + stat.variance())
 
     pass
 

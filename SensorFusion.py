@@ -6,8 +6,8 @@ from KalmanFilter import KalmanFilter
 class SensorFusion:
 
     def __init__(self, start_height, eval_variance, distance_variance, acceleration_variance):
-        self.kf = KalmanFilter(self.getA, self.getG, start_value=start_height)
-
+        self.kf = KalmanFilter(self.getA, self.getG, eval_variance, start_value=np.array([start_height, 0, 0]))
+        self.estimate = np.array((0, 0))
         self.delta_t = 0
         self.distance_variance = distance_variance
         self.acceleration_variance = acceleration_variance
@@ -42,9 +42,11 @@ class SensorFusion:
         self.kf.setH(self.acceleration_H)
         self.kf.getNewSensorValue(delta_t=self.delta_t, measurement=new_value)
 
-    def evaluate(self):
-        return self.kf.getX()
+    def estimates(self):
+        x_est = self.kf.get_x()
+        return x_est[0], x_est[2]
 
 
+#f = SensorFusion(0, 1, 2.765112489591674*1000, .00021203102776483*9.81)
 
 

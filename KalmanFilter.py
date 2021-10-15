@@ -6,17 +6,17 @@ class KalmanFilter:
     """Kalman filter, 
     """
     def __init__(self, A, G,  set_variance, white_variance=0, start_value=np.array([0, 0, 0]), H=None):
-        size = A(0).size()
+        size = A(0).shape
 
         self.A_ = A  # Can not be made before delta_t is given 3x3 vector
         self.G_ = G
         self.x_priori_ = start_value  # Set initial start value 1x3 vector
         self.x_ = start_value
 
-        if H is None:
+        if H is not None:
             self.H_ = H
         else:
-            self.H_ = np.zeroes(size[0])  # 3x1 vector
+            self.H_ = np.zeros(size[0])  # 3x1 vector
 
         self.x_Var_ = set_variance
         self.R_ = white_variance

@@ -11,6 +11,7 @@ np.set_printoptions(suppress = True)
 
 arduino_ip = '192.168.10.240'
 arduino_port = 8888
+sensor_log_data = []
 
 
 def arduino_send_receive(motor_rpm_percent):
@@ -33,6 +34,17 @@ def arduino_has_been_reset():
     print("Arduino is offline.. Maybe prepare for new initial state and re-initialize kalman filter?")
 
 
+def log_measurements_and_estimates(delta_t, estimates, measurements):
+    sensor_log_data.append([delta_t, measurements[0], measurements[1], measurements[2], measurements[3]])
+    #estimates_log_data.append([estimates.item(0, 0), estimates.item(1, 0), estimates.item(2, 0)])
+
+    if len(sensor_log_data) > 500:
+        np.savetxt('measures.csv', sensor_log_data, delimiter=',')
+        #np.savetxt('estimates.csv', estimates_log_data, delimiter=',')
+        sensor_log_data.clear()
+        #estimates_log_data.clear()
+
+
 power = 0.0
 i =0
 while(True):
@@ -41,6 +53,8 @@ while(True):
         power = 0.0
 
     sensor_values = arduino_send_receive(power)
+
+    log_measurements_and_estimates(0, 0, sensor_values)
     if(sensor_values is not None):
         use_sensor_values_for_something(sensor_values)
         if power % 10 == 1: print("-------------------------")
