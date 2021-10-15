@@ -29,7 +29,7 @@ def arduino_send_receive(estimate):
     if not reset:
         previous_time = datetime.datetime.now()
 
-    distance = estimate.item((0, 0))
+    distance = estimate.item(0)
     udp_socket.sendto(str(distance).encode(), (arduino_ip, arduino_port))
     try:
         inbound_message, remote_address = udp_socket.recvfrom(24)
@@ -76,7 +76,7 @@ def arduino_has_been_reset():
     if reset:
         print("Arduino is offline.. Resetting kalman filter")
         global f
-        f = SensorFusion()
+        f = SensorFusion(0, 1, 2.765112489591674*1000, .00021203102776483*9.81)
         reset = False
 
 

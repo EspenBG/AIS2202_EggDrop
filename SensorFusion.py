@@ -44,7 +44,8 @@ class SensorFusion:
 
     def estimates(self):
         x_est = self.kf.get_x()
-        return x_est[0], x_est[2]
+
+        return np.array((x_est[0], x_est[2]))
 
 
 #f = SensorFusion(0, 1, 2.765112489591674*1000, .00021203102776483*9.81)
