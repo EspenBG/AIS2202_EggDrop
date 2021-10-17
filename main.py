@@ -9,6 +9,8 @@ udp_socket = socket(AF_INET, SOCK_DGRAM)
 udp_socket.settimeout(1)
 udp_socket.settimeout(1)
 
+only_measure = True
+
 np.set_printoptions(suppress = True)
 
 arduino_ip = '192.168.10.240'
@@ -23,6 +25,8 @@ previous_time = datetime.datetime.now()
 
 sensor_log_data = []
 estimates_log_data = []
+
+live_plot = True
 
 
 def arduino_send_receive(estimate):
@@ -39,10 +43,18 @@ def arduino_send_receive(estimate):
         # [accel_x, accel_y, accel_z, range_sensor]
         parse = np.array(inbound_message.decode('ascii').split(',')).astype(float)
         reset = True
-        ret = [parse.item(0), parse.item(1), parse.item(2), parse.item(3)]  # husk at verdiene har ulike enheter (m/s^2 og mm)
+        if only_measure:
+            ret = [parse.item(0), parse.item(1), (parse.item(2)), parse.item(3)]  # husk at verdiene har ulike enheter (m/s^2 og mm)
+        else:
+            ret = [parse.item(0), parse.item(1), (parse.item(2)-1.0640459540459541)*9.81, parse.item(3)/1000]  # husk at verdiene har ulike enheter (m/s^2 og mm)
+
         return ret
     except Exception as e:
         print(e)
+
+
+def plot_measurements_and_estimates(delta_t, estimates, measurements):
+    pass
 
 
 def estimate(measurements):
@@ -59,6 +71,7 @@ def estimate(measurements):
     
     estimates = f.estimates()
     log_measurements_and_estimates(delta_t, estimates, measurements)
+    plot_measurements_and_estimates(delta_t, estimates, measurements)
     
     return estimates
 
