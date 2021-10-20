@@ -19,7 +19,7 @@ arduino_port = 8888
 
 # En klasse som håndterer sensor fusion og bygger matrisene som brukes i Kalman filteret. KF er implementert som en egen klasse. Disse to må dere implementere selv
 
-f = SensorFusion(0.212, .01, 2.765112489591674/1000, .040539894275893977)
+f = SensorFusion(0.212, .01, 2.765112489591674/1000, .160539894275893977)
 
 reset = True
 previous_time = datetime.datetime.now()
@@ -77,10 +77,11 @@ def log_measurements_and_estimates(delta_t, estimates, measurements):
     sensor_log_data.append([delta_t, measurements[0], measurements[1], measurements[2], measurements[3]])
     estimates_log_data.append([estimates.item(0), estimates.item(1), estimates.item(2)])
 
-    if len(sensor_log_data) > 500:
+    if len(sensor_log_data) > 1000:
         np.savetxt('measures.csv', sensor_log_data, delimiter=',')
         np.savetxt('estimates.csv', estimates_log_data, delimiter=',')
         plot_and_pause(sensor_log_data, estimates_log_data)
+        print("done writing")
         sensor_log_data.clear()
         estimates_log_data.clear()
 
@@ -91,7 +92,7 @@ def plot_and_pause(sensors, estimate):
     sensors = np.array(sensors)
     estimate = np.array(estimate)
     plt.plot(sensors[:, 4], label="TOF")
-    plt.plot(sensors[:, 3], label="IMU")
+    #plt.plot(sensors[:, 3], label="IMU")
     plt.plot(estimate[:, 0], label="pos")
     plt.plot(estimate[:, 1], label="speed")
     plt.plot(estimate[:, 2], label="accel")
@@ -104,7 +105,7 @@ def arduino_has_been_reset():
     if reset:
         print("Arduino is offline.. Resetting kalman filter")
         global f
-        #f = SensorFusion(0, .01, 2.765112489591674/1000, .040539894275893977)
+        #f = SensorFusion(0, .01, 2.765112489591674/1000, .160539894275893977)
         reset = False
 
 
