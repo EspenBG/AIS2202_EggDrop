@@ -1,3 +1,7 @@
+###
+# THIS IS  A PROGRAM TO SIMULATE A ESTIMATE BASED ON MEASUREMENT DATA
+###
+
 import datetime
 import time
 from socket import *
@@ -16,7 +20,7 @@ arduino_port = 8888
 
 # En klasse som håndterer sensor fusion og bygger matrisene som brukes i Kalman filteret. KF er implementert som en egen klasse. Disse to må dere implementere selv
 
-f = SensorFusion(0.212, .02, 2.765112489591674 / 1000, .160539894275893977)  # .160539894275893977 # 020539894275893977
+f = SensorFusion(0.212, .1, 2.765112489591674 / 1000, .160539894275893977)  # .160539894275893977 # 020539894275893977
 
 reset = True
 previous_time = datetime.datetime.now()
@@ -67,13 +71,15 @@ def arduino_has_been_reset():
         reset = False
 
 
-mesurements = np.loadtxt("measures_raw.csv",  dtype="float", delimiter=",")
+mesurements = np.loadtxt("measures_proto.csv",  dtype="float", delimiter=",")
 
 
 for mes in mesurements:
     #sensor_values = arduino_send_receive(f.estimates())
     sensor_values = mes
-    if True:
+
+    # Scale the inputs when enabled (enable if using raw data)
+    if False:
         sensor_values[3] = (sensor_values[3]-1.0640459540459541)*9.81
         sensor_values[4] = sensor_values[4]/1000
     else:

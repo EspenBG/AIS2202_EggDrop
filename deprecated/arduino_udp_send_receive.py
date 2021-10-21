@@ -1,3 +1,8 @@
+##
+# PROGRAM TO LOG DATA FROM ARDUINO
+# use this program if kalman filter is not needed
+##
+
 import time
 from socket import *
 import numpy as np

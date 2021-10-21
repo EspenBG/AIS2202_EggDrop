@@ -1,3 +1,8 @@
+##
+# PROGRAM TO ESTIMATE THE POSITION FROM ARDUINO
+# this is the main program to be used in conjunction with an arduino
+##
+
 import datetime
 import time
 from socket import *
@@ -80,7 +85,7 @@ def log_measurements_and_estimates(delta_t, estimates, measurements):
     if len(sensor_log_data) > 1000:
         np.savetxt('measures.csv', sensor_log_data, delimiter=',')
         np.savetxt('estimates.csv', estimates_log_data, delimiter=',')
-        plot_and_pause(sensor_log_data, estimates_log_data)
+        #plot_and_pause(sensor_log_data, estimates_log_data)
         print("done writing")
         sensor_log_data.clear()
         estimates_log_data.clear()
