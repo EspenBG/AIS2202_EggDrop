@@ -48,7 +48,7 @@ class KalmanFilter:
     def setH(self, H):
         self.H_ = H
 
-    def set_hvite_varians(self, variance):
+    def set_white_variance(self, variance):
         self.R_ = variance
 
     def getNewSensorValue(self, delta_t, measurement):
